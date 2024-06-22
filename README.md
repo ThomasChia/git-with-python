@@ -115,7 +115,7 @@ When we run `lit.py` we need a way of passing the command we are going to run, w
 Let's start by just taking in the name of a command and printing it to make sure everything is working smoothly. To do this, we'll define the parser, add the command argument, assign that to an `arguments` variable and log it.
 
 <p align="center">
-    <img src="./assets/lit_1.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_1.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Does this work?
@@ -150,19 +150,19 @@ lit
 In `initialise.py`, the first thing we need to do is create a `.lit` directory. To do this, we can tap into the `os.system()`, which allows us to run shell commands from Python, and then call `mkdir` to make a directory. Let's log that `.lit` has been created while we're at it, and wrap it in a function called `create_dot_lit_directory()`.
 
 <p align="center">
-    <img src="./assets/add_lit_dir.png" style="border-radius: 8px;" />
+    <img src="./assets/add_lit_dir.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Perfect, and we can repeat for `staging/objects` and `local/objects`, using the `-p` flag after `mkdir` to create any parent directories where necessary (`staging/` and `local/`). We'll also do a quick check beforehand to see if lit has already been initialised and tell the user if it has. I'm not sure how git does this, but this is good enough for me.
 
 <p align="center">
-    <img src="./assets/add.png" style="border-radius: 8px;" />
+    <img src="./assets/add.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Cool, so how do we link this with our `lit.py` file so we can run it with an `init` command? If we think about the flow, we'll want to run `lit.py` with a command. Then based on that command, we want the programme to run the associated script. Here, we'd use the `init` command and we'd want `lit.py` to call `initialise.py`. Therefore, I'm thinking that we can have a middle layer, a script called `run.py`, that will take the parsed input from `lit.py` and call the wanted script based on the command. We can put `run.py` and `initialise.py` inside the `lit/` folder for organisation. 
 
 <p align="center">
-    <img src="./assets/diagrams/lit_init_diagram.png" style="border-radius: 8px;" />
+    <img src="./assets/diagrams/lit_init_diagram.png" style="border-radius: 8px;"/>
 </p>
 
 So to actually build `run.py`, we'll want a `run()` function and then some way of taking the command given, which is a string, and linking that to the `init.py` script. Further down the line, we'll want to do this for the other git commands too. This sounds like the perfect place to use an `Enum`.
@@ -172,25 +172,25 @@ If you aren't familiar, an `Enum` is an incredible object in Python. They are a 
 Let's create an Enum called `LitCommands` and link the `init` terminal command to the `create_dot_lit_directory()` function, but without calling it. Not calling it in the Enum means we can reference `LitCommand[init].value`, shove a couple of these `()` on the end, and boom! We're calling the `create_dot_lit_directory()` script. 
 
 <p align="center">
-    <img src="./assets/lit_command_enum.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_command_enum.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 This will allow us to create our `run()` function. We want to take in the command line input from the user, the `init` command, get the associated function from the enum, assign it to a variable, `command_function`, and finally call it, `command_function()`.
 
 <p align="center">
-    <img src="./assets/run_run_incorrect.png" style="border-radius: 8px;" />
+    <img src="./assets/run_run_incorrect.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Now we just call `run()` from `lit.py` and we should be groovy!
 
 <p align="center">
-    <img src="./assets/lit_run.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_run.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 And let's give it a whirl, `python lit.py init`
 
 <p align="center">
-    <img src="./assets/init_error.png" style="border-radius: 8px;" />
+    <img src="./assets/init_error.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Shit.
@@ -198,13 +198,13 @@ Shit.
 So what's going on here? When we assigned the function within the `LitCommand` enum, Python takes the function to be a **method** of the class, rather than an attribute. We can see this if we use `LitCommand.init()` at the beginning of the `run()` function rather than `LitCommand[command].value`. Everything works smoothly. Instead, since `init` (without the brackets) isn't a member of the Enum, we get a `KeyError` when we try and do `LitCommand["init"]`. To get around this, we can use a sneaky Python function call `partial`, which is from the `functool` library. It takes a function as the first argument and returns to us a function that we can call elsewhere in the programme as and when required. Since we're not directly assigning a function to an Enum member, it doesn't take to to be a method, and we can reference it as `LitComment["init"]` just as we want.
 
 <p align="center">
-    <img src="./assets/lit_command_enum_partial.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_command_enum_partial.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Now when we run `python lit.py init`, we get.
 
 <p align="center">
-    <img src="./assets/lit_init.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_init.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Fucking money.
@@ -237,7 +237,7 @@ The game plan is as follows:
 `os` provides us with a really nice function, `os.walk()`. `os.walk()` takes a path as the input and loops over all of the directories from that point onwards. Seems pretty ideal if you ask me. So going through each of the directories and get a list of files, loop over each of the files, hash them, and copy them to our staging directory. Easy peasy.
 
 <p align="center">
-    <img src="./assets/os_walk.png" style="border-radius: 8px;" />
+    <img src="./assets/os_walk.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Wait, shit, how do you hash things. Wait, what the hell even is hashing?
@@ -253,23 +253,23 @@ Okay, so, I'm definitely not going to code that from scratch, git is hard enough
 It would be good if we had a function that takes in a file and returns the hash of its contents. Using `hashlib`, we need to create a `sha1()` object using `hashlib.sha1()`, then pass the file through the `.update({data})` function, and finally call `.hexdigest()` and bada-bing bada-boom, we have our hash.
 
 <p align="center">
-    <img src="./assets/hash_file.png" style="border-radius: 8px;" />
+    <img src="./assets/hash_file.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Actual, rather than passing the file to the function, why don't we just pass the filename. We're far more likely to be working with a filename than a variable containing a whole file anyway. Let's update the function to accept a file path, and read the file as part of the function's logic.
 
 <p align="center">
-    <img src="./assets/hash_filepath.png" style="border-radius: 8px;" />
+    <img src="./assets/hash_filepath.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/add_to_staging_fail_1.png" style="border-radius: 8px;" />
+    <img src="./assets/add_to_staging_fail_1.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 So we have a function, `add_to_staging()` that takes a list of files as the argument. We ignore the files and then walk through the entire directory, hashing all of the files as we go. We just need to add the `add` command to `lit/run.py`, linking it to the `add_to_staging()` function, which should be straightforward enough.
 
 <p align="center">
-    <img src="./assets/lit_command_add.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_command_add.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Nice, let's give this a go. The command should be `python lit.py add`.
