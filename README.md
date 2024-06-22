@@ -53,7 +53,7 @@ Here's what the `.git` directory looks like when we add and commit a file. The k
 
 <br>
 
-<p align="center">
+<!-- <p align="center">
     <div style="display: inline-block; width: 30%; text-align: center;">
         <p><strong>Before</strong></p>
         <img src="./assets/git_init_tree.png" alt="git_tree" style="vertical-align: top; width: 100%; border-radius: 8px;">
@@ -66,7 +66,11 @@ Here's what the `.git` directory looks like when we add and commit a file. The k
         <p><strong>Commit README</strong></p>
         <img src="./assets/commit_readme.png" alt="git_commit_readme" style="vertical-align: top; width: 100%; border-radius: 8px;">
     </div>
-</p>
+</p> -->
+
+Before | Add README | Commit README
+:---:|:---:|:---:
+![git_tree](./assets/git_init_tree.png) | ![git_add_readme](./assets/add_readme.png) | ![git_commit_readme](./assets/commit_readme.png)
 
 <br>
 
@@ -216,7 +220,7 @@ Let's deal with `.` as it's more general.
 So what's the actual plan? We want to copy all of the files and folders in the working directory to `.lit/staging/objects/`. More than that, if we look back to what git does when we add a file:
 
 <p align="center">
-    <img src="./assets/add_readme.png" style="border-radius: 8px;" />
+    <img src="./assets/add_readme.png" style="border-radius: 8px;" width="400"/>
 </p>
 
 We also change the name. What is this name? It's the SHA-1 hash of the file's contents (I think it also hashes random header information and a bunch of other crap, but we'll ignore that for now). So we don't need to just copy the file across, we also need to hash the contents and rename it. The final slice of magic is that git takes the first two characters of this hash, and turns them into the parent folder name. This helps with folder organisation, rather than just having a bunch of random files. For completeness, it will also compress the file, but I'm just going to pretend that doesn't happen. Too complicated.
@@ -271,13 +275,13 @@ So we have a function, `add_to_staging()` that takes a list of files as the argu
 Nice, let's give this a go. The command should be `python lit.py add`.
 
 <p align="center">
-    <img src="./assets/lit_add_fail_2.png" style="border-radius: 8px;" />
+    <img src="./assets/lit_add_fail_2.png" style="border-radius: 8px;" width="600" />
 </p>
 
 Not bad, it worked for the first few files, then breaks. So what do the working files have in common?
 
 <p align="center">
-    <img src="./assets/mukduk_directory.png" style="border-radius: 8px;" />
+    <img src="./assets/mukduk_directory.png" style="border-radius: 8px;" width="600" />
 </p>
 
 They're all base files in my working directory. Whereas `run.py`, where the error is, that's a file within the `lit/` folder. So what's happening is that `os.walk()` is going through the working directory no problem. But, when it's hitting the folders and sub-files, it's providing just the individual file name. This is then a problem for our hashing function because it's trying to find `run.py`, but that doesn't exist. What the function needs is `lit/run.py`. Unfortunately this will happen to all files not directly in our working directory because we are running the functions from our working directory. All filepaths need to be relative to this directory. So the solution is to just pass the filepath relative to our working directory and that should solve the problem. How do we do this?
@@ -381,19 +385,19 @@ And then finally, we need a reference to the main tree of the repo, so we know w
 And there we have it, in all its glory. Isn't she beautiful! Let's give her a test run, `python lit.py add`
 
 <p align="center">
-    <img src="./assets/add_log.png" style="border-radius: 8px;" />
+    <img src="./assets/add_log.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/add_dot_lit_files.png" style="border-radius: 8px;" />
+    <img src="./assets/add_dot_lit_files.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/add_reference.png" style="border-radius: 8px;" />
+    <img src="./assets/add_reference.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/current_tree_file.png" style="border-radius: 8px;" />
+    <img src="./assets/current_tree_file.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 It works!!! It fucking works!!!! We have a bunch of files in our staging area, our `add_reference` files contains a pointer to a file, and when we go to that file, it's a tree for the current fucking working directory!!!! PARTYYYYYYYYY.
@@ -459,7 +463,7 @@ Shit!
 It looks like we're passing an argument, so I guess something is going wrong with what we've just written. Let's print out `args_dict` just before we perform the `if` check to see what it looks like.
 
 <p align="center">
-    <img src="./assets/args_dict_m.png" style="border-radius: 8px;" />
+    <img src="./assets/args_dict_m.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Ah, so it seems that, even though the `m` argument is optional, it is still included in the collection of arguments, just with a `None` value. So if we go through the dictionary and remove everything with a `None` value, we should be good.
@@ -471,7 +475,7 @@ Ah, so it seems that, even though the `m` argument is optional, it is still incl
 We will also need to add similar logic to `run.py` to handle cases where arguments are and are not passed. `if` statement to the rescue!
 
 <p align="center">
-    <img src="./assets/run_final.png" style="border-radius: 8px;" />
+    <img src="./assets/run_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 Thinking ahead, while the message is an optional argument, if someone runs `commit`, we always want them to provide one. Thankfully, we have our nice error handling in `commit.py` that will error out if no message is provided. That was definitely planned and not coincidental at all. In `commit.py`, let's update the error description. Oh, I see that I thought I would be able to pass the argument with only a single `-`, how naive and moronic. Let's throw a second `-` in there.
@@ -485,33 +489,33 @@ So....ladies and gentlemen, I think we might have done it. I think we might have
 ### init
 
 <p align="center">
-    <img src="./assets/init_logs_final.png" style="border-radius: 8px;" />
+    <img src="./assets/init_logs_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/init_files_final.png" style="border-radius: 8px;" />
+    <img src="./assets/init_files_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 
 ### add
 
 <p align="center">
-    <img src="./assets/add_logs_final.png" style="border-radius: 8px;" />
+    <img src="./assets/add_logs_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/add_files_final.png" style="border-radius: 8px;" />
+    <img src="./assets/add_files_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 
 ### commit
 
 <p align="center">
-    <img src="./assets/commit_logs_final.png" style="border-radius: 8px;" />
+    <img src="./assets/commit_logs_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 <p align="center">
-    <img src="./assets/commit_files_final.png" style="border-radius: 8px;" />
+    <img src="./assets/commit_files_final.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 It works!!! It fucking works!!!!
@@ -523,19 +527,19 @@ Let's really check, what's in `HEAD`
 Okay, let's go to `cc/0de7fa7a06322202adaaf313eb5292336f3966` file. That should be a commit object.
 
 <p align="center">
-    <img src="./assets/cc_file.png" style="border-radius: 8px;" />
+    <img src="./assets/cc_file.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 YESSSSS. Okay, next test, let's go to the tree that it's pointing to, that should be the structure of the working directory. `cd36a94dd91b4b0a694e84e8864eab6d3aa9589a`.
 
 <p align="center">
-    <img src="./assets/cd_file.png" style="border-radius: 8px;" />
+    <img src="./assets/cd_file.png" style="border-radius: 8px;" width="600"/>
 </p>
 
 No fucking way!!!! This is actually working, okay, so `db6640235b9a0604d314b54820c3012ea979c2e4` should just be our `lit.py` file.
 
 <p align="center">
-    <img src="./assets/db_file.png" style="border-radius: 8px;" />
+    <img src="./assets/db_file.png" style="border-radius: 8px;" width="600">
 </p>
 
 I might cry.
